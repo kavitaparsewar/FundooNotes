@@ -24,18 +24,18 @@ namespace CommonLayer.Models
             message.Formatter = new XmlMessageFormatter(new Type[] { typeof(string) });  //it Creates a asynchronous communication
 
             message.ReceiveCompleted += Message_ReceiveCompleted;    //Press tab
-
+            
             message.Send(Token);
             message.BeginReceive();
             message.Close();
         }
 
-        private void Message_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
+         void Message_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
         {
             var msg = message.EndReceive(e.AsyncResult);
 
             string token = msg.Body.ToString();
-
+            MailMessage sendEmail = new MailMessage();
             string subject = " Fundoo Notes Password Reset";
 
             string Body = "token";
@@ -43,11 +43,12 @@ namespace CommonLayer.Models
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,
-                Credentials = new NetworkCredential("kavita@gmail.com", "Kavita@1234"), //here valid email and password
+                Credentials = new NetworkCredential("parsewar11@gmail.com ", "Komal@11"), //here valid email and password
                 EnableSsl = true,
-            };
+            };          
 
-            smtpClient.Send("kavita@gmail", "jwt", subject, Body);
+           // SendAsync(string from, string recipients, string subject, string body, object userToken);
+            smtpClient.SendAsync("parsewar11@gmail.com", "parsewar11@gmail.com", subject, Body,sender);
 
             message.BeginReceive();
         }

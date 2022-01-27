@@ -5,13 +5,13 @@ using System.Text;
 
 namespace BusinessLayer.Interfaces
 {
-   public interface IUserBL
+    public interface IUserBL
     {
         public bool Registration(UserRegistration user);
         public bool Login(UserLogin userlogin);
-
         public string GenerateJWTToken(string Email);
+       public string ForgetPassword(string Email);
 
-        public string FogotPassword(string Email);
+        public string ResetPassword(string Email);
     }
 }

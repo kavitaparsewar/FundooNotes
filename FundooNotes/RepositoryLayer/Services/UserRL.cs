@@ -31,14 +31,13 @@ namespace RepositoryLayer.Services
                 newuser.LastName = user.LastName;
                 newuser.Email = user.Email;
                 newuser.Password = user.Password;
-               
+
                 context.Users.Add(newuser);
                 int result = context.SaveChanges();//save all changes in database also
                 if (result > 0)
                     return true;
                 else
                     return false;
-
             }
             catch (Exception)
             {
@@ -64,45 +63,30 @@ namespace RepositoryLayer.Services
 
                     return true;
                 }
-                else 
+                else
                 {
                     return false;
                 }
-
             }
             catch (Exception)
             {
-
                 throw;
             }
-
-
         }
-
-        public string GenerateJwtToken(string Email)
+        public string GenerateJwtToken(string email)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt : key"]));
-            var credintials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[]{
-                new Claim(ClaimTypes.Email,Email)
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(configuration["Jwt:key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                { new Claim("Email", email) }),
+                Expires = DateTime.Now.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
-
-            var token = new JwtSecurityToken(configuration["jwt:Issuer"], Email,
-                claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: credintials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
-
-        //public string GenerateJWTToken(string Email)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-
-
-
         public string ForgetPassword(string EmailId)
         {
             try
@@ -128,6 +112,32 @@ namespace RepositoryLayer.Services
                 throw;
             }
         }
+
+        public string ResetPassword(string Email)
+        {
+            try
+            {
+                
+                Reset newreset = new Reset();
+                var Login = this.context.Users.Where(option => option.Email == Email.ConfirmPassword);
+                if (Login != null)
+                {
+                    context.Users.Attach((User)Login);
+                    context.SaveChanges();
+                    return true;
+                }
+
+                   return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+
+
 
     }
 }

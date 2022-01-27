@@ -9,10 +9,10 @@ namespace RepositoryLayer.Interfaces
     {
         public bool Registration(UserRegistration user);
 
-        public bool Login(UserLogin userlogin);
+        public bool Login(UserLogin userlogin);            
+        public string GenerateJwtToken(string Email);
+       public  string ForgetPassword(string Email);
 
-        public string GenerateJWTToken(string Email);
-
-        public string FogotPassword(string Email);
+        public string ResetPassword(string Email);
     }
 }

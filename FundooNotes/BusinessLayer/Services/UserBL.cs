@@ -26,8 +26,6 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
-
-
         public bool Login(UserLogin userlogin)
         {
             try
@@ -44,7 +42,7 @@ namespace BusinessLayer.Services
         {
             try
             {
-                return userRL.GenerateJWTToken(Email);
+                return userRL.GenerateJwtToken(Email);
             }
             catch (Exception)
             {
@@ -53,18 +51,30 @@ namespace BusinessLayer.Services
             }
         }
 
-
-       public string FogotPassword(string Email)
+        public string ForgetPassword(string Email)
         {
             try
             {
-                return userRL.FogotPassword(Email);
+                return userRL.ForgetPassword(Email);
+
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        public string ResetPassword(string Email)
+        {
+            try
+            {
+                return userRL.ResetPassword(Email);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        
     }
 }
