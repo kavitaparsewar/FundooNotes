@@ -38,11 +38,11 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
-        public string GenerateJWTToken(string Email)
+        public string GenerateJWTToken(string email)
         {
             try
             {
-                return userRL.GenerateJwtToken(Email);
+                return userRL.GenerateJwtToken(email);
             }
             catch (Exception)
             {
@@ -51,11 +51,11 @@ namespace BusinessLayer.Services
             }
         }
 
-        public string ForgetPassword(string Email)
+        public string ForgetPassword(string email)
         {
             try
             {
-                return userRL.ForgetPassword(Email);
+                return userRL.ForgetPassword(email);
 
             }
             catch (Exception)
@@ -64,17 +64,17 @@ namespace BusinessLayer.Services
             }
         }
 
-        public string ResetPassword(string Email)
+        public bool ResetPassword(string email, string password, string confirmpassword)
         {
             try
             {
-                return userRL.ResetPassword(Email);
+                return userRL.ResetPassword(email,password, confirmpassword);
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        
+
     }
 }

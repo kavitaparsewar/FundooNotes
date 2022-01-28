@@ -62,11 +62,11 @@ namespace FundooNotes.Controllers
             }          
         }
         [HttpPost("ForgetPassword")]
-        public IActionResult ForgetPassword(string EmailId)
+        public IActionResult ForgetPassword(string email)
         {
             try
             {
-                string Forget = userBL.ForgetPassword(EmailId);
+                string Forget = userBL.ForgetPassword(email);
                 if (Forget != null)
                 {
                     
@@ -86,12 +86,12 @@ namespace FundooNotes.Controllers
 
         [HttpPost("ResetPassword")]
 
-        public IActionResult ResetPassword(string Email)
+        public IActionResult ResetPassword(string Email,string password,string confirmpassword)
         {
             try
             {
-                string Reset = userBL.ResetPassword(Email);
-                if (Reset != null)
+                bool Reset = userBL.ResetPassword(Email, password, confirmpassword);               
+                if (Reset == true) //Reset != null
                 {
                     return this.Ok(new { Success = true, message = "Reset Successful" });
                 }

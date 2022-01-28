@@ -32,6 +32,7 @@
       "FundooNotes/1.0.0": {
         "dependencies": {
           "BusinessLayer": "1.0.0",
+          "Experimental.System.Messaging": "1.1.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "3.1.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "3.1.0",
           "Microsoft.EntityFrameworkCore.Tools": "3.1.0",

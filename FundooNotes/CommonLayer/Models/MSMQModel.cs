@@ -35,11 +35,11 @@ namespace CommonLayer.Models
             var msg = message.EndReceive(e.AsyncResult);
 
             string token = msg.Body.ToString();
-            MailMessage sendEmail = new MailMessage();
+            
             string subject = " Fundoo Notes Password Reset";
 
-            string Body = "token";
-
+            string Body = token;
+            string jwt = DecodeJwt(token);
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,
@@ -48,7 +48,7 @@ namespace CommonLayer.Models
             };          
 
            // SendAsync(string from, string recipients, string subject, string body, object userToken);
-            smtpClient.SendAsync("parsewar11@gmail.com", "parsewar11@gmail.com", subject, Body,sender);
+            smtpClient.Send("parsewar11@gmail.com", jwt,subject, Body);
 
             message.BeginReceive();
         }

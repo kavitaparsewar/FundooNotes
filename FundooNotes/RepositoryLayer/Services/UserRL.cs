@@ -87,20 +87,18 @@ namespace RepositoryLayer.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        public string ForgetPassword(string EmailId)
+        public string ForgetPassword(string email)
         {
             try
-            {
+            {                
+                var chkemail = context.Users.FirstOrDefault(e => e.Email == email);
 
-                var Email = context.Users.FirstOrDefault(e => e.Email == EmailId);
-
-                if (Email != null)
+                if (chkemail != null)
                 {
-                    var token = GenerateJwtToken(Email.Email);
+                    var token = GenerateJwtToken(email);
 
                     new MSMQModel().MsmqSender(token);
                     return token;
-
                 }
                 else
                 {
@@ -113,21 +111,23 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public string ResetPassword(string Email)
+        public bool ResetPassword(string email,string password,string confirmpassword)
         {
             try
             {
-                
-                Reset newreset = new Reset();
-                var Login = this.context.Users.Where(option => option.Email == Email.ConfirmPassword);
-                if (Login != null)
+
+                if (password.Equals(confirmpassword))
                 {
-                    context.Users.Attach((User)Login);
+                    User user = context.Users.Where(option => option.Email == email).FirstOrDefault();
+                    user.Password = confirmpassword;
                     context.SaveChanges();
                     return true;
                 }
-
-                   return false;
+                else
+                {
+                    return false;
+                }
+                
             }
             catch (Exception)
             {

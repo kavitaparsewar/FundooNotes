@@ -9,9 +9,11 @@ namespace BusinessLayer.Interfaces
     {
         public bool Registration(UserRegistration user);
         public bool Login(UserLogin userlogin);
-        public string GenerateJWTToken(string Email);
-       public string ForgetPassword(string Email);
+        public string GenerateJWTToken(string email);
+        public string ForgetPassword(string email);
 
-        public string ResetPassword(string Email);
+        public bool ResetPassword(string email,string password, string confirmpassword);
+
+       
     }
 }
