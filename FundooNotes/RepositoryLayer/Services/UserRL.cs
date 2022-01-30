@@ -78,9 +78,8 @@ namespace RepositoryLayer.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(configuration["Jwt:key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                { new Claim("Email", email) }),
+            {              
+                Subject = new ClaimsIdentity(new[] { new Claim("Email", email) }),
                 Expires = DateTime.Now.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -90,7 +89,7 @@ namespace RepositoryLayer.Services
         public string ForgetPassword(string email)
         {
             try
-            {                
+            {
                 var chkemail = context.Users.FirstOrDefault(e => e.Email == email);
 
                 if (chkemail != null)
@@ -109,17 +108,16 @@ namespace RepositoryLayer.Services
             {
                 throw;
             }
-        }
-
-        public bool ResetPassword(string email,string password,string confirmpassword)
+        }       
+        public bool ResetPassword(string email, string password, string confirmPassword)
         {
             try
             {
 
-                if (password.Equals(confirmpassword))
+                if (password.Equals(confirmPassword))
                 {
-                    User user = context.Users.Where(option => option.Email == email).FirstOrDefault();
-                    user.Password = confirmpassword;
+                    User user = context.Users.Where(e => e.Email == email).FirstOrDefault();
+                    user.Password = confirmPassword;
                     context.SaveChanges();
                     return true;
                 }
@@ -127,18 +125,13 @@ namespace RepositoryLayer.Services
                 {
                     return false;
                 }
-                
             }
             catch (Exception)
             {
+
                 throw;
             }
         }
-
-
-
-
-
     }
 }
 

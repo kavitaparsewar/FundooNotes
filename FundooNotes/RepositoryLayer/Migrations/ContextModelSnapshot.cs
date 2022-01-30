@@ -19,6 +19,48 @@ namespace RepositoryLayer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("RepositoryLayer.Entities.Note", b =>
+                {
+                    b.Property<long>("NoteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Createst")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsArchieve")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTrash")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Modifiedat")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Remainder")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("NoteId");
+
+                    b.ToTable("Notes");
+                });
+
             modelBuilder.Entity("RepositoryLayer.Entities.User", b =>
                 {
                     b.Property<long>("Id")

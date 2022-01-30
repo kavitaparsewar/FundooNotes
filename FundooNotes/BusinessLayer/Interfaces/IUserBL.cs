@@ -11,7 +11,6 @@ namespace BusinessLayer.Interfaces
         public bool Login(UserLogin userlogin);
         public string GenerateJWTToken(string email);
         public string ForgetPassword(string email);
-
         public bool ResetPassword(string email,string password, string confirmpassword);
 
        

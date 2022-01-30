@@ -38,88 +38,92 @@ namespace FundooNotes
             services.AddControllers();
 
             services.AddDbContext<Context>(opts => opts.UseSqlServer(Configuration["ConnectionString:FundooDB"]));
+
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();
 
-            services.AddSwaggerGen(swagger =>
+            services.AddTransient<INoteBL, NoteBL>();
+            services.AddTransient<INoteRL, NoteRL>();
+            
+            services.AddSwaggerGen(c =>
             {
-                // To Enable authorization using Swagger (JWT)
-                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Welcome to FundooNotes" });
+
+
+                var securitySchema = new OpenApiSecurityScheme
                 {
+                    Description = "Using the Authorization header with the Bearer scheme.",
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                });
-                //services.AddSwaggerGen();
-                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    Reference = new OpenApiReference
                     {
-                          new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                                }
-                            },
-                            new string[] {}
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
                     }
+                };
 
-                });
-                services.AddAuthentication(option =>
+                c.AddSecurityDefinition("Bearer", securitySchema);
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+              { securitySchema, new[] { "Bearer" } }
+          });
 
+            });
+            //var jwtSection = Configuration.GetSection("Jwt:Key");
 
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-                }).AddJwtBearer(options =>
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = false,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) //Configuration["JwtToken:SecretKey"]
-                    };
-                });
-
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) //Configuration["JwtToken:SecretKey"]
+                };
             });
         }
 
-
-            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
             {
-                if (env.IsDevelopment())
-                {
-
-
-                    app.UseDeveloperExceptionPage();
-                }
-
-                app.UseHttpsRedirection();
-
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V2");
-                });
-
-                app.UseRouting();
-                app.UseAuthorization();
-                app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllers();
-                });
-
-
+                app.UseDeveloperExceptionPage();
             }
 
+            app.UseHttpsRedirection();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fundoo");
+            });
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
+
+
+
+
+}
+
+        
+    

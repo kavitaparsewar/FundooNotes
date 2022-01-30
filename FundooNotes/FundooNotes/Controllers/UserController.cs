@@ -1,10 +1,12 @@
 ﻿using BusinessLayer.Interfaces;
 using CommonLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FundooNotes.Controllers
@@ -83,22 +85,18 @@ namespace FundooNotes.Controllers
                 //throw;
             }
         }
+        
 
+       [Authorize]
         [HttpPost("ResetPassword")]
-
-        public IActionResult ResetPassword(string Email,string password,string confirmpassword)
+        public IActionResult ResetPassword(string password, string confirmPassword)
         {
             try
             {
-                bool Reset = userBL.ResetPassword(Email, password, confirmpassword);               
-                if (Reset == true) //Reset != null
-                {
-                    return this.Ok(new { Success = true, message = "Reset Successful" });
-                }
-                else
-                {
-                    return this.BadRequest(new { Success = false, message = "Fail" });
-                }
+                var email = User.Claims.First(e => e.Type == "Email").Value;
+                //var email1 = User.FindFirst(ClaimTypes.Email).Value.ToString();
+                userBL.ResetPassword(email, password, confirmPassword);
+                return Ok(new { message = "Password reset succussfully" });
             }
             catch (Exception)
             {
