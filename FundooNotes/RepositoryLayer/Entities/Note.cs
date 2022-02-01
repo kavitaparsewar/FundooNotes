@@ -11,7 +11,7 @@ namespace RepositoryLayer.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long NoteId { get; set; }
-        [ForeignKey("User")]
+        [ForeignKey("user")]
         public long Id { get; set; }
         public virtual User user { get; set; }
         public string Title { get; set; }

@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
 using CommonLayer.Models;
+using Microsoft.AspNetCore.Http;
 using RepositoryLayer.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,11 @@ namespace BusinessLayer.Services
             this.noteRL = noteBL;
         }
 
-        public bool CreateNotes(NotesModel notesModel)
+        public bool CreateNotes(NotesModel notesModel, long ID)
         {
             try
             {
-                return noteRL.CreateNote(notesModel);
+                return noteRL.CreateNote(notesModel,ID);
             }
             catch (Exception)
             {
@@ -28,11 +29,11 @@ namespace BusinessLayer.Services
             }
         }
 
-        public bool UpdateNotes(int noteID, NotesModel notesModel)
+        public bool UpdateNotes(long ID, NotesModel notesModel)
         {
             try
             {
-                if (noteRL.UpdateNotes(noteID, notesModel))
+                if (noteRL.UpdateNotes(ID, notesModel))
                     return true;
                 else
                     return false;
@@ -45,11 +46,99 @@ namespace BusinessLayer.Services
         }
 
 
-        public bool DeleteNote(int noteID)
+        public bool DeleteNote(long ID)
         {
             try
             {
-                if (noteRL.DeleteNote(noteID))
+                if (noteRL.DeleteNote(ID))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public IEnumerable<NotesModel> GetNote()
+        {
+            try
+            {
+                return noteRL.GetNote();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public bool IsArchieveNote(long ID)
+        {
+            try
+            {
+                if (noteRL.IsArchieveNote(ID))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool IsPin(long ID)
+        {
+            try
+            {
+                if (noteRL.IsPin(ID))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool IsTrash(long ID)
+        {
+            try
+            {
+                if (noteRL.IsTrash(ID))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public bool Image(long userId, long ID, IFormFile file)
+        {
+            try
+            {
+                return noteRL.Image(userId, ID, file);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public bool Colorchange(long userId, long ID, string color)
+        {
+            try
+            {
+                if (noteRL.color(userId, ID, color))
                     return true;
                 else
                     return false;

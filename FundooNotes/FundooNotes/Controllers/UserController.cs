@@ -46,8 +46,8 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                string token = userBL.GenerateJWTToken(userlogin.Email);
-                if (userBL.Login(userlogin))
+                string token = userBL.Login(userlogin);
+                if (token != null)
                 {
                    
                     return this.Ok(new { Success = true, message = "login successful",Token=token });

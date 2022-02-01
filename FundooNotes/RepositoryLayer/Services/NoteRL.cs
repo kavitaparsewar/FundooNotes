@@ -1,4 +1,6 @@
 ﻿using CommonLayer.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.AppContext;
@@ -7,6 +9,7 @@ using RepositoryLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -16,21 +19,26 @@ namespace RepositoryLayer.Services
     public class NoteRL : INoteRL
     {
         Context context;
+        //[Obsolete]
+
+        private readonly IHostingEnvironment hostingEnvironment;
         private readonly IConfiguration configuration;
-        public NoteRL(Context context, IConfiguration config)
+        public NoteRL(Context context, IConfiguration config, IHostingEnvironment hostingEnvironment)
         {
             this.context = context;//appcontext to for api
             this.configuration = config;//for startup file instance
+
+            this.hostingEnvironment = hostingEnvironment;
         }
 
 
-        public bool CreateNote(NotesModel notemodel)
+        public bool CreateNote(NotesModel notemodel, long ID)
         {
             try
             {
                 Note notes = new Note();
-
-                notes.Id = notemodel.Id;
+                
+                notes.Id = ID;
                 notes.Title = notemodel.Title;
                 notes.Message = notemodel.Message;
                 notes.Remainder = notemodel.Remainder;
@@ -53,25 +61,11 @@ namespace RepositoryLayer.Services
             }
         }
 
-        //public string GenerateJwtToken(string Id)
-        //{
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var key = Encoding.ASCII.GetBytes(configuration["Jwt:key"]);
-        //    var tokenDescriptor = new SecurityTokenDescriptor
-        //    {
-        //        Subject = new ClaimsIdentity(new[] { new Claim("Email", Id) }),
-        //        Expires = DateTime.Now.AddHours(1),
-        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        //    };
-        //    var token = tokenHandler.CreateToken(tokenDescriptor);
-        //    return tokenHandler.WriteToken(token);
-        //}
-
-
-        public bool UpdateNotes(int noteID, NotesModel notesModel)
+        
+        public bool UpdateNotes(long ID, NotesModel notesModel)
         {
-            Note notes = context.Notes.Where(e => e.NoteId == noteID).FirstOrDefault();
-            
+            Note notes = context.Notes.Where(e => e.NoteId == ID).FirstOrDefault();
+
             notes.Title = notesModel.Title;
             notes.Message = notesModel.Message;
             notes.Remainder = notesModel.Remainder;
@@ -91,9 +85,9 @@ namespace RepositoryLayer.Services
         }
 
 
-        public bool DeleteNote(int noteID)
+        public bool DeleteNote(long ID)
         {
-            Note notes = context.Notes.Where(e => e.NoteId == noteID).FirstOrDefault();
+            Note notes = context.Notes.Where(e => e.NoteId == ID).FirstOrDefault();
 
 
             if (notes != null)
@@ -107,6 +101,146 @@ namespace RepositoryLayer.Services
             {
                 return false;
             }
+        }
+
+
+        public IEnumerable<NotesModel> GetNote()
+        {
+            return Context.Note.ToList<Note>();
+            
+
+          
+        }
+
+
+
+
+
+        public bool IsArchieveNote(long ID)
+        {
+            try
+            {
+
+                Note notes = this.context.Notes.FirstOrDefault(e => e.NoteId == ID);
+                if (notes.IsArchieve == true)
+                {
+                    notes.IsArchieve = false;
+                    this.context.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    notes.IsArchieve = true;
+                    this.context.SaveChanges();
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+
+        public bool IsPin(long ID)
+        {
+            try
+            {
+
+                Note notes = this.context.Notes.FirstOrDefault(e => e.NoteId == ID);
+                if (notes.IsPin == true)
+                {
+                    notes.IsPin = false;
+                    this.context.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    notes.IsPin = true;
+                    this.context.SaveChanges();
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public bool IsTrash(long ID)
+        {
+            try
+            {
+
+                Note notes = this.context.Notes.FirstOrDefault(e => e.NoteId == ID);
+                if (notes.IsTrash == true)
+                {
+                    notes.IsTrash = false;
+                    this.context.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    notes.IsTrash = true;
+                    this.context.SaveChanges();
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool Image(long userID, long ID, IFormFile file)
+        {
+            try
+            {
+                var target = Path.Combine(hostingEnvironment.ContentRootPath, "Image");
+                Directory.CreateDirectory(target);
+                var filePath = Path.Combine(target, file.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+
+                Note note = context.Notes.FirstOrDefault(e => e.Id == userID && e.NoteId == ID);
+                if (note != null)
+                {
+                    note.Image = file.FileName;
+                    var result = context.SaveChanges();
+                    
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+        public bool color(long ID, long noteID,string color)
+        {
+            
+            Note note = context.Notes.FirstOrDefault(e => e.Id == ID && e.NoteId == ID);
+
+            if (note != null)
+            {
+
+                note.Color = color;
+                context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
     }
 }

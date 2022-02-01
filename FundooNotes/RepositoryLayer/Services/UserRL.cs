@@ -45,35 +45,68 @@ namespace RepositoryLayer.Services
                 throw;
             }
         }
-        public bool Login(UserLogin userlogin)
+        public string Login(UserLogin userlogin)
         {
+            //try
+            //{
+            //    User newuser = new User();
+
+            //    var result = context.Users.Where(x => x.Email == userlogin.Email && x.Password == userlogin.Password).FirstOrDefault();
+
+            //    if (result != null)
+            //    {
+            //        string token = "";
+            //        UserResponse loginResponse = new UserResponse();
+            //        token = GenerateJwtToken(userlogin.Email);
+            //        loginResponse.Email = userlogin.Email;
+            //        loginResponse.Token = token;
+
+            //        return true;
+            //    }
+            //    else
+            //    {
+            //        return false;
+            //    }
+            //}
+            //catch (Exception)
+            //{
+            //  throw;
+            //}
             try
             {
                 User newuser = new User();
+                newuser = context.Users.Where(x => x.Email == userlogin.Email && x.Password == userlogin.Password).FirstOrDefault();
+                long id = newuser.Id;
+                if (newuser != null)
 
-                var result = context.Users.Where(x => x.Email == userlogin.Email && x.Password == userlogin.Password).FirstOrDefault();
-
-                if (result != null)
-                {
-                    string token = "";
-                    UserResponse loginResponse = new UserResponse();
-                    token = GenerateJwtToken(userlogin.Email);
-                    loginResponse.Email = userlogin.Email;
-                    loginResponse.Token = token;
-
-                    return true;
-                }
+                    return TokenForId(id);
                 else
-                {
-                    return false;
-                }
+                    return null;
+
             }
             catch (Exception)
             {
+
                 throw;
             }
         }
-        public string GenerateJwtToken(string email)
+
+        public string TokenForId(long Id)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(configuration["Jwt:key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] { new Claim("Id", Id.ToString()) }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+        
+
+            public string GenerateJwtToken(string email)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(configuration["Jwt:key"]);
@@ -86,6 +119,8 @@ namespace RepositoryLayer.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+
         public string ForgetPassword(string email)
         {
             try
