@@ -104,16 +104,20 @@ namespace RepositoryLayer.Services
         }
 
 
-        public IEnumerable<NotesModel> GetNote()
+        public IEnumerable<Note> GetNote()
         {
-            return Context.Note.ToList<Note>();
-            
+           
 
-          
+           return context.Notes.ToList();          
         }
 
+        public IEnumerable<Note> GetNoteById(long id)
+        {
+            {
+                return context.Notes.Where(e => e.Id == id).ToList();
+            }
 
-
+        }
 
 
         public bool IsArchieveNote(long ID)

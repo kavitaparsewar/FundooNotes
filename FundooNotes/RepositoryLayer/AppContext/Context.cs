@@ -12,7 +12,7 @@ namespace RepositoryLayer.AppContext
             : base(options)
         {
         }
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; } 
         public DbSet<Note> Notes { get; set; }
         public DbSet<Collab> Collaborator { get; set; }
     }

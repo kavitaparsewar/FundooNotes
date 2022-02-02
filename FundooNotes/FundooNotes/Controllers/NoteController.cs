@@ -3,6 +3,7 @@ using CommonLayer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RepositoryLayer.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,7 +89,7 @@ namespace FundooNotes.Controllers
         [Authorize]
         [HttpGet("GetNote")]
 
-        public IEnumerable<NotesModel> GetNotes()
+        public IEnumerable<Note> GetNotes()
         {
             try
             {
@@ -101,6 +102,21 @@ namespace FundooNotes.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
+
+        public IEnumerable<Note> GetNoteById(long id)
+        {
+            try
+            {
+                return noteBL.GetNoteById(id);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
 
         [Authorize]

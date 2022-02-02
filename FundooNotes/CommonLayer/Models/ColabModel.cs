@@ -9,6 +9,7 @@ namespace CommonLayer.Models
         public long NoteId { get; set; }
 
         public long CollabId { get; set; }
+
         public string Email { get; set; }
 
 

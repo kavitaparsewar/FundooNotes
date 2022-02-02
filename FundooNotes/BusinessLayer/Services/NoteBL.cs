@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Interfaces;
 using CommonLayer.Models;
 using Microsoft.AspNetCore.Http;
+using RepositoryLayer.Entities;
 using RepositoryLayer.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -63,7 +64,7 @@ namespace BusinessLayer.Services
         }
 
 
-        public IEnumerable<NotesModel> GetNote()
+        public IEnumerable<Note> GetNote()
         {
             try
             {
@@ -75,6 +76,22 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
+
+
+        public IEnumerable<Note> GetNoteById(long id)
+        {
+            try
+            {
+                return noteRL.GetNoteById(id);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
         public bool IsArchieveNote(long ID)
         {
             try

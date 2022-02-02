@@ -1,5 +1,6 @@
 ﻿using CommonLayer.Models;
 using Microsoft.AspNetCore.Http;
+using RepositoryLayer.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,10 @@ namespace RepositoryLayer.Interfaces
         public bool UpdateNotes(long ID, NotesModel notesModel);
         public bool DeleteNote(long ID);
 
-        public IEnumerable<NotesModel> GetNote();
+        public IEnumerable<Note> GetNote();
+
+        public IEnumerable<Note> GetNoteById(long id);
+
 
         public bool IsArchieveNote(long ID);
         public bool IsPin(long ID);
