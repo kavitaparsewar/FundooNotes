@@ -1,4 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
+using CommonLayer.Models;
+using RepositoryLayer.Entities;
 using RepositoryLayer.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,11 +17,22 @@ namespace BusinessLayer.Services
             this.colabRL = userBL;
         }
 
-        public bool AddColab(string Email)
+        public bool AddColab(ColabModel colabmodel)       
         {
             try
             {
-                return colabRL.AddColab(colab);
+                return colabRL.AddColab(colabmodel);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public IEnumerable<Collab> GetColabById(long id, long NoteId)
+        {
+            try
+            {
+                return colabRL.GetColabById(id, NoteId);
             }
             catch (Exception)
             {
@@ -27,31 +40,17 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
+        public bool DeleteColab(long Id, long NoteId, string Email)
+        {
+            try
+            {
+                return colabRL.DeleteColab(Id, NoteId,Email);
+            }
+            catch (Exception)
+            {
 
-        //public bool DeleteColab(string Email)
-        //{
-        //    try
-        //    {
-        //        return colabRL.DeleteColab(colab);
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
-
-        //public bool GetColab(string Email)
-        //{
-        //    try
-        //    {
-        //        return colabRL.GetColab(colab);
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
+                throw;
+            }
+        }
     }
 }
