@@ -26,9 +26,10 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                if (userBL.Registration(user))
+                var result = userBL.Registration(user);
+                if (result != null)
                 {
-                    return this.Ok(new { Success = true, message = "Registration successfull" });
+                    return this.Ok(new { Success = true, message = "Registration successfull" ,Response=result} );
                 }
                 else
                 {
@@ -88,7 +89,7 @@ namespace FundooNotes.Controllers
         
 
        [Authorize]
-        [HttpPost("ResetPassword")]
+       [HttpPost("ResetPassword")]
         public IActionResult ResetPassword(string password, string confirmPassword)
         {
             try

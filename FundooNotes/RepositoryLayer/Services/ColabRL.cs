@@ -25,12 +25,12 @@ namespace RepositoryLayer.Services
             try
             {
                 Collab collaborator = new Collab();
-                Note note = context.Notes.Where(e => e.NoteId == colabmodel.NoteId && e.Id == colabmodel.NoteId).FirstOrDefault();
+                Note note = context.Notes.Where(e => e.NoteId == colabmodel.NoteId && e.Id == colabmodel.Id).FirstOrDefault();
                 if (note != null)
                 {
                     collaborator.NoteId = colabmodel.NoteId;
                     collaborator.Email = colabmodel.Email;
-                    collaborator.Id = colabmodel.NoteId;
+                    collaborator.Id = colabmodel.Id;
                     context.Collaborator.Add(collaborator);
                     var result = context.SaveChanges();
                     return true;

@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
 using CommonLayer.Models;
+using RepositoryLayer.Entities;
 using RepositoryLayer.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace BusinessLayer.Services
         {
             this.userRL = userBL;
         }
-        public bool Registration(UserRegistration user)
+        public User Registration(UserRegistration user)
         {
             try
             {

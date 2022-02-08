@@ -6,8 +6,8 @@ namespace CommonLayer.Models
 {
     public class ColabModel
     {
-       public long CollabId { get; set; }
-
+       //public long CollabId { get; set; }
+        public long Id { get; set; }
         public long  NoteId{ get; set; }
 
         public string Email { get; set; }

@@ -21,8 +21,9 @@ namespace FundooNotes.Controllers
         {
             this.colabBL = userBL;
         }
+    
         [Authorize]
-        [HttpPost("AddCOllaborator")]
+        [HttpPost]
         public IActionResult AddCollaborator(long NoteId, string Email)
         {
             try
@@ -30,7 +31,8 @@ namespace FundooNotes.Controllers
                 long Id = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
 
                 ColabModel colabmodel = new ColabModel();
-                //ColabModel.Id = Id;
+
+                colabmodel.Id = Id;
                 colabmodel.NoteId = NoteId;
                 colabmodel.Email = Email;
                 var result = colabBL.AddColab(colabmodel);
@@ -53,7 +55,7 @@ namespace FundooNotes.Controllers
 
 
         [Authorize]
-        [HttpGet("GetColabById")]
+        [HttpGet]
         public IEnumerable<Collab> GetCollaboratorsByID(long id, long NoteId)
         {
             try
@@ -68,7 +70,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpDelete("DeleteColab")]
+        [HttpDelete]
         public IActionResult DeleteColab(long Id, long NoteId, string Email)
         {
             try

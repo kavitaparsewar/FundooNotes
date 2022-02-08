@@ -11,6 +11,6 @@ namespace BusinessLayer.Interfaces
         public IEnumerable<Label> RenameLabel(long Id, string oldLabelName, string newlabelName);
         public IEnumerable<Label> GetLabelByNoteId(long Id, long NoteId);
         public bool DeleteLabel(long Id, string labelName);
-        public bool DeleteLabelByNoteId(long Id, long NoteId, string labelName);   
+        public bool DeleteLabelByNoteId(long Id, long NoteId, string labelName);
     }
 }

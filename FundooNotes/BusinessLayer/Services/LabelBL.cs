@@ -40,11 +40,11 @@ namespace BusinessLayer.Services
                 throw;
             }
         }
-       public IEnumerable<Label> GetLabelByNoteId(long Id, long NoteId)
+        public IEnumerable<Label> GetLabelByNoteId(long Id, long NoteId)
         {
             try
             {
-                return labelRL.GetLabelByNoteId(Id,NoteId);
+                return labelRL.GetLabelByNoteId(Id, NoteId);
             }
             catch (Exception)
             {
@@ -71,7 +71,7 @@ namespace BusinessLayer.Services
         {
             try
             {
-                return labelRL.DeleteLabelByNoteId(Id,NoteId, labelName);
+                return labelRL.DeleteLabelByNoteId(Id, NoteId, labelName);
             }
             catch (Exception)
             {

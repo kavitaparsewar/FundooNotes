@@ -22,7 +22,12 @@ namespace RepositoryLayer.Services
             this.context = context;//appcontext to for api
             this.configuration = config;//for startup file instance
         }
-        public bool Registration(UserRegistration user)
+        /// <summary>
+        /// this is registration method.
+        /// </summary>
+        /// <param name="user">this is model object   </param>
+        /// <returns>  it returns current updated object </returns>
+        public User Registration(UserRegistration user)
         {
             try
             {
@@ -30,14 +35,49 @@ namespace RepositoryLayer.Services
                 newuser.FirstName = user.FirstName;
                 newuser.LastName = user.LastName;
                 newuser.Email = user.Email;
-                newuser.Password = user.Password;
+                newuser.Password = EncryptPassword(user.Password);
 
                 context.Users.Add(newuser);
                 int result = context.SaveChanges();//save all changes in database also
                 if (result > 0)
-                    return true;
+                    return newuser;
                 else
-                    return false;
+                    return newuser;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public string EncryptPassword(string password)
+        {
+            try
+            {
+                byte[] encode = new byte[password.Length];
+                encode = Encoding.UTF8.GetBytes(password);
+                string encPassword = Convert.ToBase64String(encode);
+                return encPassword;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public string DecryptPassword(string encryptpwd)
+        {
+            try
+            {
+                UTF8Encoding encodepwd = new UTF8Encoding();
+                Decoder Decode = encodepwd.GetDecoder();
+                byte[] todecode_byte = Convert.FromBase64String(encryptpwd);
+                int charCount = Decode.GetCharCount(todecode_byte, 0, todecode_byte.Length);
+                char[] decoded_char = new char[charCount];
+                Decode.GetChars(todecode_byte, 0, todecode_byte.Length, decoded_char, 0);
+                string decryptpwd = new String(decoded_char);
+                return decryptpwd;
             }
             catch (Exception)
             {
@@ -47,38 +87,13 @@ namespace RepositoryLayer.Services
         }
         public string Login(UserLogin userlogin)
         {
-            //try
-            //{
-            //    User newuser = new User();
-
-            //    var result = context.Users.Where(x => x.Email == userlogin.Email && x.Password == userlogin.Password).FirstOrDefault();
-
-            //    if (result != null)
-            //    {
-            //        string token = "";
-            //        UserResponse loginResponse = new UserResponse();
-            //        token = GenerateJwtToken(userlogin.Email);
-            //        loginResponse.Email = userlogin.Email;
-            //        loginResponse.Token = token;
-
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        return false;
-            //    }
-            //}
-            //catch (Exception)
-            //{
-            //  throw;
-            //}
             try
             {
-                User newuser = new User();
-                newuser = context.Users.Where(x => x.Email == userlogin.Email && x.Password == userlogin.Password).FirstOrDefault();
-                long id = newuser.Id;
-                if (newuser != null)
-
+                User user = new User();
+                user = context.Users.Where(x => x.Email == userlogin.Email).FirstOrDefault();
+                string decPass = DecryptPassword(user.Password);
+                var id = user.Id;
+                if (decPass == userlogin.Password && user != null)
                     return TokenForId(id);
                 else
                     return null;
@@ -89,6 +104,11 @@ namespace RepositoryLayer.Services
 
                 throw;
             }
+
+
+            
+
+
         }
 
         public string TokenForId(long Id)
@@ -125,9 +145,9 @@ namespace RepositoryLayer.Services
         {
             try
             {
-                var chkemail = context.Users.FirstOrDefault(e => e.Email == email);
+               // var chkemail = context.Users.FirstOrDefault(e => e.Email == email);
 
-                if (chkemail != null)
+                if (email != null)
                 {
                     var token = GenerateJwtToken(email);
 
@@ -152,7 +172,7 @@ namespace RepositoryLayer.Services
                 if (password.Equals(confirmPassword))
                 {
                     User user = context.Users.Where(e => e.Email == email).FirstOrDefault();
-                    user.Password = confirmPassword;
+                    user.Password = EncryptPassword(confirmPassword);
                     context.SaveChanges();
                     return true;
                 }

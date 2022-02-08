@@ -3,10 +3,16 @@ using CommonLayer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
+using RepositoryLayer.AppContext;
 using RepositoryLayer.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FundooNotes.Controllers
@@ -16,13 +22,20 @@ namespace FundooNotes.Controllers
     public class NoteController : ControllerBase
     {
         public INoteBL noteBL;
-        public NoteController(INoteBL noteBL)
+
+        Context context;
+        private readonly IMemoryCache memoryCache;
+        private readonly IDistributedCache distributedCache;
+        public NoteController(INoteBL notesBL, IMemoryCache memoryCache, IDistributedCache distributedCache, Context context)
         {
-            this.noteBL = noteBL;
+            this.noteBL = notesBL;
+            this.memoryCache = memoryCache;
+            this.distributedCache = distributedCache;
+            this.context = context;
         }
 
         [Authorize]
-        [HttpPost("CreateNote")]
+        [HttpPost]
         public IActionResult CreateNotes(NotesModel notemodel)
         {
             try
@@ -40,8 +53,30 @@ namespace FundooNotes.Controllers
             }
         }
 
+        [HttpGet("redis")]
+        public async Task<IActionResult> GetAllNotesUsingRedisCache()
+        {
+            var cacheKey = "NotesList";
+            string serializedNotesList;
+            var notesList = new List<Note>();
+            var redisNotesList = await distributedCache.GetAsync(cacheKey);
+            if (redisNotesList != null)
+            {
+                serializedNotesList = Encoding.UTF8.GetString(redisNotesList);
+                notesList = JsonConvert.DeserializeObject<List<Note>>(serializedNotesList);
+            }
+            else
+            {
+                notesList = await context.Notes.ToListAsync();
+                serializedNotesList = JsonConvert.SerializeObject(notesList);
+                redisNotesList = Encoding.UTF8.GetBytes(serializedNotesList);
+            }
+            return Ok(notesList);
+        }
+
+
         [Authorize]
-        [HttpPut("UpdateNote")]     
+        [HttpPut]     
         public IActionResult UpdateNotes(long ID, NotesModel notesModel)
         {
             try
@@ -63,7 +98,7 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpDelete("DeleteNote")]
+        [HttpDelete]
 
 
         public IActionResult DeleteNote(long ID)
@@ -87,7 +122,7 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpGet("GetNote")]
+        [HttpGet]
 
         public IEnumerable<Note> GetNotes()
         {
@@ -120,7 +155,7 @@ namespace FundooNotes.Controllers
 
 
         [Authorize]
-        [HttpPut("Archieve")]
+        [HttpPut]
         public IActionResult IsArchieveNote(long ID) 
         {
             try
@@ -148,7 +183,7 @@ namespace FundooNotes.Controllers
 
 
         [Authorize]
-        [HttpPut("Pin")]
+        [HttpPut]
 
         public IActionResult IsPin(long ID)
         {
@@ -175,7 +210,7 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpPut("Trash")]
+        [HttpPut]
 
         public IActionResult IsTrash(long ID)
         {
@@ -202,7 +237,7 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpPut("Image")]
+        [HttpPut]
 
         public IActionResult Image(long ID, IFormFile image)
         {
@@ -229,7 +264,7 @@ namespace FundooNotes.Controllers
 
 
         [Authorize]
-        [HttpPut("color")]
+        [HttpPut]
 
         public IActionResult Color(long NoteID, string Color)
         {

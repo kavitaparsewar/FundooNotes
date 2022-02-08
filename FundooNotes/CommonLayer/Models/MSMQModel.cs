@@ -38,7 +38,7 @@ namespace CommonLayer.Models
             
             string subject = " Fundoo Notes Password Reset";
 
-            string Body = token;
+            string Body = $"Fundoo Notes Reset Password: <a href=http://localhost:4200/resetPassword/{token}> Click Here</a>";
             string jwt = DecodeJwt(token);
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {

@@ -20,7 +20,7 @@ namespace FundooNotes.Controllers
             this.labelBL = userBL;
         }
         [Authorize]
-        [HttpPost("CreateLabel")]       
+        [HttpPost("CreateLabel")]
         public IActionResult CreateLabel(long Id, long NoteId, string newlabelName)
         {
             try
@@ -29,7 +29,7 @@ namespace FundooNotes.Controllers
                 var result = labelBL.CreateLabel(Id, NoteId, newlabelName);
                 if (result != null)
                 {
-                    return this.Ok(new { success = true, message = "Label added successfully"});
+                    return this.Ok(new { success = true, message = "Label added successfully" });
                 }
                 else
                 {
@@ -51,7 +51,7 @@ namespace FundooNotes.Controllers
             try
             {
                 long ID = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
-                var result = labelBL.RenameLabel(Id, oldLabelName,newlabelName);
+                var result = labelBL.RenameLabel(Id, oldLabelName, newlabelName);
                 if (result != null)
                 {
                     return this.Ok(new { success = true, message = "Label renamed ", Response = result });
@@ -71,13 +71,13 @@ namespace FundooNotes.Controllers
 
 
         [Authorize]
-        [HttpGet("GetLabelByNoteId")]
+        [HttpGet("GetLabelById")]
         public IEnumerable GetLabelByNoteId(long Id, long NoteId)
         {
             try
             {
                 long userID = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
-                return labelBL.GetLabelByNoteId(Id,NoteId);
+                return labelBL.GetLabelByNoteId(Id, NoteId);
             }
             catch (Exception)
             {
@@ -89,7 +89,7 @@ namespace FundooNotes.Controllers
 
         [Authorize]
         [HttpDelete("DeleteLabel")]
-        public IActionResult DeleteLabel(long Id ,string labelName)
+        public IActionResult DeleteLabel(long Id, string labelName)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace FundooNotes.Controllers
                 long userID = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
 
 
-                if (labelBL.DeleteLabelByNoteId(Id, NoteId,labelName))
+                if (labelBL.DeleteLabelByNoteId(Id, NoteId, labelName))
                 {
                     return this.Ok(new { success = true, message = "Label removed successfully" });
                 }
